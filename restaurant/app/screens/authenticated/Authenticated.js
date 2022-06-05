@@ -40,6 +40,7 @@ import {setToken} from '../../ReduxStore/AuthStore';
 import AllMembers from './all_member/AllMembers';
 import AddMeal from './add_meal/AddMeal';
 import Payments from './payments/Payments';
+import AddMember from './add_member/AddMember';
 
 const Authenticated = ({navigation}) => {
   const dispatch = useDispatch();
@@ -100,7 +101,7 @@ const Authenticated = ({navigation}) => {
       />
       <Drawer.Screen
         name="Add Members"
-        component={AllMembers}
+        component={AddMember}
         options={{
           drawerIcon: ({focused, size}) => {
             let color = focused ? 'red' : 'black';

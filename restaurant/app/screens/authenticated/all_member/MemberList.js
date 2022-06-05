@@ -27,35 +27,35 @@ const MemberList = ({navigation}) => {
 
   const [search, setSearch] = useState('');
 
-  const [member, setMember] = useState();
+  const [member, setMember] = useState([]);
+  const [filteredmember, setFilteredMember] = useState([]);
+
   const getMember = async () => {
     setLoading(true);
     let res = await memberService.getAll();
-    setMember(res);
-    setFilteredMember(res);
+    setMember(res.data);
+    setFilteredMember(res.data);
     setLoading(false);
   };
 
-  const [filteredmember, setFilteredMember] = useState();
   const filter = () => {
     let data = member;
-
     if (due) {
-      data = data.filter(item => item?.balance < 0);
+      data = data?.filter(item => item?.balance < 0);
       if (emergency) {
-        data = data.filter(item => item?.balance < -emergency_amount + 1);
+        data = data?.filter(item => item?.balance < -emergency_amount + 1);
       }
     }
     if (search.length) {
-      data = data.filter(item =>
-        item.fullname.toLowerCase().includes(search.toLowerCase()),
+      data = data?.filter(item =>
+        item?.fullname.toLowerCase().includes(search.toLowerCase()),
       );
     }
     setFilteredMember(data);
   };
 
   useEffect(() => {
-    if (filteredmember) filter();
+    filter();
   }, [due, emergency, emergency_amount, search, member]);
 
   useEffect(() => {
@@ -131,26 +131,26 @@ const MemberList = ({navigation}) => {
             Amount
           </Text>
         </View>
-        {filteredmember && (
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{height: windowHeight * 0.45}}>
-            {filteredmember.map(itm => {
-              return (
-                <TouchableOpacity
-                  style={styles.mealList}
-                  key={itm?._id}
-                  onPress={() => {
-                    navigation.navigate('member_profile', {user_id: itm._id});
-                  }}>
-                  <Text style={styles.mealdate}>{itm?.fullname}</Text>
-                  <Text style={styles.mealfield}>{itm?.username}</Text>
-                  <Text style={styles.mealfield}>{itm?.balance}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        )}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{height: windowHeight * 0.45}}>
+          {filteredmember?.map(itm => {
+            return (
+              <TouchableOpacity
+                style={styles.mealList}
+                key={itm?.id}
+                onPress={() => {
+                  navigation.navigate('member_profile', {
+                    username: itm?.username,
+                  });
+                }}>
+                <Text style={styles.mealdate}>{itm?.fullname}</Text>
+                <Text style={styles.mealfield}>{itm?.username}</Text>
+                <Text style={styles.mealfield}>{itm?.balance}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
       <Modal animationType="slide" transparent={true} visible={loading}>
         <View style={styles.loginModalView}>

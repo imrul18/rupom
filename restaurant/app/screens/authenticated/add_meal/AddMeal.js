@@ -19,82 +19,33 @@ const AddMeal = () => {
   const [text, setText] = useState();
   const [loading, setLoading] = useState(false);
 
-  const onSuccess = async res => {
+  const addMeal = async username => {
     setLoading(true);
-    let value = res.data.toString();
-    const date = new Date();
 
-    let type = {
-      user_id: value,
+    const date = new Date();
+    let data = {
+      username: username,
       datetime: `${date.getDate()}-${
         date.getMonth() + 1
       }-${date.getFullYear()}`,
     };
-
-    let data;
-
     if (date.getHours() > 10 && date.getHours() < 18) {
-      data = {...type, lunch: '1'};
+      await MealService.addlunch(data);
     } else if (date.getHours() > 17 && date.getHours() < 24) {
-      data = {...type, dinner: '1'};
+      await MealService.adddinner(data);
     } else {
-      data = {...type, breakfast: '1'};
+      await MealService.breakfast(data);
     }
-    if (value && data) {
-      try {
-        await MealService.addbyqrcode(data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid QR code',
-        text2: 'Please scan a valid QR code...',
-        position: 'top',
-      });
-    }
+    setLoading(false);
+  };
+
+  const onSuccess = async res => {
+    let value = res.data.toString();
+    addMeal(value);
   };
 
   const manualAdd = async () => {
-    setLoading(true);
-    const date = new Date();
-
-    let type = {
-      username: text,
-      datetime: `${date.getDate()}-${
-        date.getMonth() + 1
-      }-${date.getFullYear()}`,
-    };
-
-    let data;
-
-    if (date.getHours() > 10 && date.getHours() < 18) {
-      data = {...type, lunch: '1'};
-    } else if (date.getHours() > 17 && date.getHours() < 24) {
-      data = {...type, dinner: '1'};
-    } else {
-      data = {...type, breakfast: '1'};
-    }
-
-    if (data) {
-      try {
-        await MealService.addbyqrusername(data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid QR code',
-        text2: 'Please scan a valid QR code...',
-        position: 'top',
-      });
-    }
+    addMeal(text);
   };
 
   return (

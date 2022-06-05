@@ -7,23 +7,31 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import UserService from '../../services/UserService';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
-const MealDetails = ({navigation}) => {
-  let {userData, userMeal} = useSelector(state => state.usersStore);
+const MealDetails = ({navigation, route}) => {
+  const username =route.params.username
+  const [userData, setUserData] = useState();
+  const [userMeal, setUserMeal] = useState();
+
+  const getData = async () => {
+    var res = await UserService.getuserdata(username);
+    setUserData(res.data[0]);
+    res = await UserService.getmealdata(username);
+    setUserMeal(res.data);
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const [total, setTotal] = useState(0);
-
-  const users = userData[0];
-  const meals = userMeal;
-
   const calculateTotal = () => {
     let carryTotal = 0;
-    meals.forEach(element => {
-      if (new Date().getMonth() + 1 === new Date(element.date).getMonth() + 1) {
+    userMeal?.forEach(element => {
+      if (new Date().getMonth() + 1 === new Date(element.created_at).getMonth() + 1) {
         if (element?.dinner) {
           carryTotal = carryTotal + element.dinner;
         }
@@ -36,8 +44,10 @@ const MealDetails = ({navigation}) => {
   };
 
   useEffect(() => {
-    calculateTotal();
-  }, []);
+    if (userMeal) {
+      calculateTotal();
+    }
+  }, [userMeal]);
 
   return (
     <View style={styles.container}>
@@ -45,17 +55,17 @@ const MealDetails = ({navigation}) => {
         <Image
           style={styles.image}
           source={{
-            uri: users?.imagelink,
+            uri: userData?.imagelink,
           }}
         />
-        <Text style={styles.text}>{users?.fullname}</Text>
+        <Text style={styles.text}>{userData?.fullname}</Text>
       </View>
       <View style={styles.secondhalf}>
         <View style={styles.information}>
           <View style={styles.informationfield}>
             <View style={styles.field}>
               <Text style={styles.fieldname}>Total Balance</Text>
-              <Text style={styles.fieldvalue}>{users?.balance}</Text>
+              <Text style={styles.fieldvalue}>{userData?.balance}</Text>
             </View>
             <View style={styles.field}>
               <Text style={styles.fieldname}>Total Meal</Text>
@@ -101,14 +111,15 @@ const MealDetails = ({navigation}) => {
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{height: windowHeight * 0.45}}>
-            {meals.map(itm => {
-              let date = new Date(itm?.date);
+            {userMeal?.map(itm => {
+              let date = new Date(itm?.created_at);
+              
               if (
                 new Date().getMonth() + 1 ===
-                new Date(itm?.date).getMonth() + 1
+                new Date(itm?.created_at).getMonth() + 1
               ) {
                 return (
-                  <View style={styles.mealList} key={itm?._id}>
+                  <View style={styles.mealList} key={itm?.id}>
                     <Text style={styles.mealdate}>{`${date.getDate()}-${
                       date.getMonth() + 1
                     }-${date.getFullYear()}`}</Text>
@@ -123,7 +134,7 @@ const MealDetails = ({navigation}) => {
             <Text
               style={styles.btn}
               onPress={() => {
-                navigation.navigate('dashboard');
+                navigation.navigate('dashboard', {username: username});
               }}>
               Back
             </Text>
@@ -214,7 +225,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   btn: {
-    padding: 15,
+    padding: 10,
     textAlign: 'center',
     borderRadius: 20,
     backgroundColor: '#0CCBE5',

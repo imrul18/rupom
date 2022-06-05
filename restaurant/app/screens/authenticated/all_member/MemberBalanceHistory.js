@@ -24,7 +24,7 @@ const MemberBalanceHistory = ({navigation, route}) => {
       meals.forEach(element => {
         if (
           new Date().getMonth() + 1 ===
-          new Date(element.date).getMonth() + 1
+          new Date(element.created_at).getMonth() + 1
         ) {
           if (element?.dinner) {
             carryTotal = carryTotal + element.dinner;
@@ -92,7 +92,7 @@ const MemberBalanceHistory = ({navigation, route}) => {
             <Text
               style={{
                 ...styles.mealdate,
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: 'bold',
                 color: '#fff',
               }}>
@@ -101,7 +101,7 @@ const MemberBalanceHistory = ({navigation, route}) => {
             <Text
               style={{
                 ...styles.mealfield,
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: 'bold',
                 color: '#fff',
               }}>
@@ -109,8 +109,17 @@ const MemberBalanceHistory = ({navigation, route}) => {
             </Text>
             <Text
               style={{
+                ...styles.mealfield,
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: '#fff',
+              }}>
+              C/A
+            </Text>
+            <Text
+              style={{
                 ...styles.mealcomment,
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: 'bold',
                 color: '#fff',
               }}>
@@ -122,17 +131,17 @@ const MemberBalanceHistory = ({navigation, route}) => {
             style={{height: windowHeight * 0.3}}>
             {thisMonth
               ? balancehistory.map(itm => {
-                  let date = new Date(itm?.date);
+                  let date = new Date(itm?.created_at);
                   if (
                     new Date().getMonth() + 1 ===
-                    new Date(itm?.date).getMonth() + 1
+                    new Date(itm?.created_at).getMonth() + 1
                   ) {
                     return (
-                      <View style={styles.mealList}>
+                      <View style={styles.mealList} key={itm?.id}>
                         <Text style={styles.mealdate}>{`${date.getDate()}-${
                           date.getMonth() + 1
                         }-${date.getFullYear()}`}</Text>
-                        <Text style={styles.mealfield}>{itm?.details}</Text>
+
                         {itm?.amount < 0 ? (
                           <Text style={{...styles.mealfield, color: 'red'}}>
                             {itm?.amount}
@@ -140,20 +149,22 @@ const MemberBalanceHistory = ({navigation, route}) => {
                         ) : (
                           <Text style={styles.mealfield}>{itm?.amount}</Text>
                         )}
-                        <Text style={styles.mealfield}>{itm?.current_amount}</Text>
+                        <Text style={styles.mealfield}>
+                          {itm?.current_amount}
+                        </Text>
+                        <Text style={styles.mealcomment}>{itm?.details}</Text>
                       </View>
                     );
                   }
                 })
               : balancehistory.map(itm => {
-                  let date = new Date(itm?.date);
+                  let date = new Date(itm?.created_at);
                   return (
-                    <View style={styles.mealList} key={itm?._id}>
+                    <View style={styles.mealList} key={itm?.id}>
                       <Text style={styles.mealdate}>{`${date.getDate()}-${
                         date.getMonth() + 1
                       }-${date.getFullYear()}`}</Text>
-                      
-                      <Text style={styles.mealfield}>{itm?.details}</Text>
+
                       {itm?.amount < 0 ? (
                         <Text style={{...styles.mealfield, color: 'red'}}>
                           {itm?.amount}
@@ -161,7 +172,10 @@ const MemberBalanceHistory = ({navigation, route}) => {
                       ) : (
                         <Text style={styles.mealfield}>{itm?.amount}</Text>
                       )}
-                      <Text style={styles.mealfield}>{itm?.current_amount}</Text>
+                      <Text style={styles.mealfield}>
+                        {itm?.current_amount}
+                      </Text>
+                      <Text style={styles.mealcomment}>{itm?.details}</Text>
                     </View>
                   );
                 })}
@@ -253,15 +267,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   mealdate: {
-    width: windowWidth * 0.25,
+    width: windowWidth * 0.22,
     textAlign: 'center',
   },
   mealfield: {
-    width: windowWidth * 0.2,
+    width: windowWidth * 0.15,
     textAlign: 'center',
   },
   mealcomment: {
-    width: windowWidth * 0.35,
+    width: windowWidth * 0.25,
     textAlign: 'center',
   },
   btn: {

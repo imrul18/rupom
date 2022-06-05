@@ -24,7 +24,7 @@ const MemberMealDetails = ({navigation, route}) => {
       meals.forEach(element => {
         if (
           new Date().getMonth() + 1 ===
-          new Date(element.date).getMonth() + 1
+          new Date(element.created_at).getMonth() + 1
         ) {
           if (element?.dinner) {
             carryTotal = carryTotal + element.dinner;
@@ -122,10 +122,10 @@ const MemberMealDetails = ({navigation, route}) => {
             style={{height: windowHeight * 0.35}}>
             {thisMonth
               ? meals.map(itm => {
-                  let date = new Date(itm?.date);
+                  let date = new Date(itm?.created_at);
                   if (
                     new Date().getMonth() + 1 ===
-                    new Date(itm?.date).getMonth() + 1
+                    new Date(itm?.created_at).getMonth() + 1
                   ) {
                     return (
                       <View style={styles.mealList} key={itm?._id}>
@@ -139,7 +139,7 @@ const MemberMealDetails = ({navigation, route}) => {
                   }
                 })
               : meals.map(itm => {
-                  let date = new Date(itm?.date);
+                  let date = new Date(itm?.created_at);
 
                   return (
                     <View style={styles.mealList} key={itm?._id}>

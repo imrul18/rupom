@@ -17,17 +17,14 @@ const windowWidth = Dimensions.get('window').width;
 const MakePayments = ({navigation, route}) => {
   let {userData, userMeal} = route.params;
 
-  const [loading, setLoading] = useState(false);
-
   const [total, setTotal] = useState(0);
 
-  const users = userData;
   const meals = userMeal;
 
   const calculateTotal = () => {
     let carryTotal = 0;
     meals.forEach(element => {
-      if (new Date().getMonth() + 1 === new Date(element.date).getMonth() + 1) {
+      if (new Date().getMonth() + 1 === new Date(element.created_at).getMonth() + 1) {
         if (element?.dinner) {
           carryTotal = carryTotal + element.dinner;
         }
@@ -47,21 +44,17 @@ const MakePayments = ({navigation, route}) => {
   const [comment, setComment] = useState();
 
   const makePayment = async () => {
-    setLoading(true);
     if (amount) {
       try {
         await PaymentService.addpayment({
-          user_id: users._id,
+          username: userData.username,
           amount: amount,
           comment: comment,
         });
-        setLoading(false);
         navigation.navigate('add_payment')
       } catch (error) {
-        setLoading(false);
       }
     } else {
-      setLoading(false);
       Toast.show({
         type: 'error',
         text1: 'Invalid Amount',
@@ -76,17 +69,17 @@ const MakePayments = ({navigation, route}) => {
         <Image
           style={styles.image}
           source={{
-            uri: users?.imagelink,
+            uri: userData?.imagelink,
           }}
         />
-        <Text style={styles.text}>{users?.fullname}</Text>
+        <Text style={styles.text}>{userData?.fullname}</Text>
       </View>
       <View style={styles.secondhalf}>
         <View style={styles.information}>
           <View style={styles.informationfield}>
             <View style={styles.field}>
               <Text style={styles.fieldname}>Total Balance</Text>
-              <Text style={styles.fieldvalue}>{users?.balance}</Text>
+              <Text style={styles.fieldvalue}>{userData?.balance}</Text>
             </View>
             <View style={styles.field}>
               <Text style={styles.fieldname}>Total Meal</Text>

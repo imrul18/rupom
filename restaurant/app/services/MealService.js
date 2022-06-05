@@ -1,37 +1,22 @@
 import http from './http-common';
-import Toast from 'react-native-toast-message';
 
-const addbyqrcode = async data => {
-  try {
-    const res = await http.post(`meals/addbyqrcode`, data);
-    return res.data;
-  } catch {
-    Toast.show({
-      type: 'error',
-      text1: 'Invalid QR code',
-      text2: 'Please Scan a valid QR code...',
-      position: 'top',
-    });
-  }
+const addbreakfast = async data => {
+  const res = await http.post(`meals/addbreakfast`, data);
+  return res.data;
 };
-
-const addbyqrusername = async (data) => {
-    try {
-        const res = await http.post(`meals/addbyqrusername`, data);
-        return res.data;
-      } catch {
-        Toast.show({
-          type: 'error',
-          text1: 'Invalid QR code',
-          text2: 'Please Scan a valid QR code...',
-          position: 'top',
-        });
-      }
+const addlunch = async data => {
+  const res = await http.post(`meals/addlunch`, data);
+  return res.data;
+};
+const adddinner = async data => {
+  const res = await http.post(`meals/adddinner`, data);
+  return res.data;
 };
 
 const MealService = {
-  addbyqrcode,
-  addbyqrusername,
+  addbreakfast,
+  addlunch,
+  adddinner,
 };
 
 export default MealService;

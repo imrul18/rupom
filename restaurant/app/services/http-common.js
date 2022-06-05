@@ -5,17 +5,14 @@ import axios from "axios";
 
 let Api = axios.create({
   baseURL: `http://192.168.0.42:3000/`,
-  // baseURL: `//api.naf-inventory.test/api/`,
-  // baseURL: `//naf-inventory.test/api/`,
+  // baseURL: `http://localhost:3000/`,
   headers: {
     "Content-type": "application/json",
     "accept": "application/json",
   },
   transformResponse: function (data) {
 
-
     let response = JSON.parse(data);
-
 
     if (response.type==='error') {
       Toast.show({ type: 'error', text1: response?.message, text2: response?.message2, position: "top" });

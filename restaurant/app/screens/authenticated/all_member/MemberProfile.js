@@ -33,11 +33,14 @@ const MemberProfile = ({navigation, route}) => {
 
   const getData = async () => {
     setLoading(true);
-    const res = await UserService.getbyid(route.params.user_id);
-    setUsers(res.data.userData[0]);
-    setMeals(res.data.meals);
-    setPayments(res.data.payments);
-    setBalanceHistory(res.data.balancehistory);
+    var res = await UserService.getuserdata(route.params.username);
+    setUsers(res.data[0]);
+    res = await UserService.getmealdata(route.params.username);
+    setMeals(res.data);
+    res = await UserService.getpaymentdata(route.params.username);
+    setPayments(res.data);
+    res = await UserService.getbalancedata(route.params.username);
+    setBalanceHistory(res.data);
     setLoading(false);
   };
 
@@ -50,7 +53,7 @@ const MemberProfile = ({navigation, route}) => {
   const calculateTotal = () => {
     let carryTotal = 0;
     meals?.forEach(element => {
-      if (new Date().getMonth() + 1 === new Date(element.date).getMonth() + 1) {
+      if (new Date().getMonth() + 1 === new Date(element.created_at).getMonth() + 1) {
         if (element?.dinner) {
           carryTotal = carryTotal + element.dinner;
         }
@@ -76,7 +79,7 @@ const MemberProfile = ({navigation, route}) => {
 
 
   const downLoadIDcard = async () => {
-    
+    console.log("Downloaded");
   };
 
   return (

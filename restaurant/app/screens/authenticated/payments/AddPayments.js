@@ -12,6 +12,7 @@ import {
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Toast from 'react-native-toast-message';
 import UserService from '../../../services/UserService';
+import AddMeal from '../add_meal/AddMeal';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -19,54 +20,28 @@ const AddPayments = ({navigation}) => {
   const [text, setText] = useState();
   const [loading, setLoading] = useState(false);
 
-  const onSuccess = async res => {
+  const addPayment = async username => {
     setLoading(true);
-    let value = res.data.toString();
-
-    if (value) {
-      try {
-        const data = await UserService.getbyid(value);
-        setLoading(false);
-        navigation.navigate('make_payment', {
-          userData: data.data.userData[0],
-          userMeal: data.data.meals,
-        });
-      } catch (error) {
-        setLoading(false);
-      }
-    } else {
+    try {
+      const res1 = await UserService.getuserdata(username);
+      const res2 = await UserService.getmealdata(username);
+      
       setLoading(false);
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid QR code',
-        text2: 'Please scan a valid QR code...',
-        position: 'top',
+      navigation.navigate('make_payment', {
+        userData: res1.data[0],    
+        userMeal: res2.data  
       });
+    } catch (error) {
+      setLoading(false);
     }
+  };
+  const onSuccess = async res => {
+    let value = res.data.toString();
+    addPayment(value);
   };
 
   const manualAdd = async () => {
-    setLoading(true);
-    if (text) {
-      try {
-        const data = await UserService.getbyusername(text);
-        setLoading(false)
-        navigation.navigate('make_payment', {
-          userData: data.data.userData[0],
-          userMeal: data.data.meals,
-        });
-      } catch (error) {
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid Username',
-        text2: 'Please give a valid username...',
-        position: 'top',
-      });
-    }
+    addPayment(text);
   };
 
   return (

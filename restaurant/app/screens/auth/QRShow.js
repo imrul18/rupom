@@ -11,60 +11,47 @@ import {
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Toast from 'react-native-toast-message';
-import { useDispatch } from 'react-redux';
-import { setUsers } from '../../ReduxStore/UsersStore';
 import UserService from '../../services/UserService';
 
 const windowWidth = Dimensions.get('window').width;
 
 const Auth = ({navigation}) => {
-  const dispatch = useDispatch();
   const [text, setText] = useState();
   const [loading, setLoading] = useState(false);
 
-  const onSuccess = async res => {
+  const showData = async username => {
     setLoading(true);
+    if (username) {
+      try {
+        const res = await UserService.getuserdata(username);
+        setLoading(false);
+        if (res.data) {
+          navigation.navigate('dashboard', {username: username});
+        }
+      } catch (error) {
+        setLoading(false);
+      }
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid',
+        text2: 'Please give a valid user...',
+        position: 'top',
+      });
+    }
+  };
+  const onSuccess = async res => {
     let data = res.data.toString();
-    if (data) {
-      try {
-        const res = await UserService.getbyid(data);
-        setLoading(false);
-        dispatch(setUsers(res.data))
-        navigation.navigate('dashboard');
-      } catch (error) {
-        setLoading(false);
-      }
-    } else {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid QR code',
-        text2: 'Please scan a valid QR code...',
-        position: 'top',
-      });
-    }
+    showData(data);
   };
-  const manualShow = async() => {
-    if (text) {
-      try {
-        const res = await UserService.getbyusername(text);
-        setLoading(false);
-        dispatch(setUsers(res.data))
-        navigation.navigate('dashboard');
-      } catch (error) {
-        setLoading(false);
-      }
-    } else {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid Username',
-        text2: 'Please insert a valid username...',
-        position: 'top',
-      });
-    }
+  const manualShow = async () => {
+    showData(text);
   };
-  const loginpage = ()=> {
+
+  const loginpage = () => {
     navigation.navigate('login');
   };
+  
   return (
     <View style={styles.container}>
       <View style={styles.qrcontainer}>
@@ -123,7 +110,7 @@ const styles = StyleSheet.create({
   btn: {
     margin: 10,
     padding: 10,
-    width: windowWidth*0.6,
+    width: windowWidth * 0.6,
     textAlign: 'center',
     fontSize: 20,
     borderRadius: 50,

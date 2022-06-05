@@ -5,22 +5,33 @@ import {openComposer} from 'react-native-email-link';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {current} from '@reduxjs/toolkit';
+import UserService from '../../services/UserService';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
-const Dashboard = ({navigation}) => {
-  let {userData, userMeal} = useSelector(state => state.usersStore);
+const Dashboard = ({navigation, route}) => {
+  const username = route.params.username;
+  const [userData, setUserData] = useState();
+  const [userMeal, setUserMeal] = useState();
+
+  const getData = async () => {
+    var res = await UserService.getuserdata(username);
+    setUserData(res.data[0]);
+    res = await UserService.getmealdata(username);
+    setUserMeal(res.data);
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const [total, setTotal] = useState(0);
-
-  const users = userData[0];
-  const meals = userMeal;
-
   const calculateTotal = () => {
     let carryTotal = 0;
-    meals.forEach(element => {
-      if (new Date().getMonth() + 1 === new Date(element.date).getMonth() + 1) {
+    userMeal.forEach(element => {
+      if (
+        new Date().getMonth() + 1 ===
+        new Date(element.created_at).getMonth() + 1
+      ) {
         if (element?.dinner) {
           carryTotal = carryTotal + element.dinner;
         }
@@ -33,12 +44,14 @@ const Dashboard = ({navigation}) => {
   };
 
   useEffect(() => {
-    calculateTotal();
-  }, []);
+    if (userMeal) {
+      calculateTotal();
+    }
+  }, [userMeal]);
 
   const sendmail = () => {
     openComposer({
-      to: users?.email,
+      to: userData?.email,
       subject: 'About Govt. BM College Canteen Issue',
       body: 'Hi, ...',
     });
@@ -49,17 +62,17 @@ const Dashboard = ({navigation}) => {
         <Image
           style={styles.image}
           source={{
-            uri: users?.imagelink,
+            uri: userData?.imagelink,
           }}
         />
-        <Text style={styles.text}>{users?.fullname}</Text>
+        <Text style={styles.text}>{userData?.fullname}</Text>
       </View>
       <View style={styles.secondhalf}>
         <View style={styles.information}>
           <View style={styles.informationfield}>
             <View style={styles.field}>
               <Text style={styles.fieldname}>Total Balance</Text>
-              <Text style={styles.fieldvalue}>{users?.balance}</Text>
+              <Text style={styles.fieldvalue}>{userData?.balance}</Text>
             </View>
             <View style={styles.field}>
               <Text style={styles.fieldname}>Total Meal</Text>
@@ -75,7 +88,7 @@ const Dashboard = ({navigation}) => {
               color="#0CCBE5"
               onPress={sendmail}
             />
-            <Text style={{padding: 5, paddingLeft: 20}}>{users?.email}</Text>
+            <Text style={{padding: 5, paddingLeft: 20}}>{userData?.email}</Text>
           </View>
           <View style={styles.detailsinfo}>
             <Ionicons
@@ -83,10 +96,10 @@ const Dashboard = ({navigation}) => {
               size={28}
               color="#0CCBE5"
               onPress={() => {
-                Linking.openURL(`tel:${users?.phone}`);
+                Linking.openURL(`tel:${userData?.phone}`);
               }}
             />
-            <Text style={{padding: 5, paddingLeft: 20}}>{users?.phone}</Text>
+            <Text style={{padding: 5, paddingLeft: 20}}>{userData?.phone}</Text>
           </View>
           <View style={styles.detailsinfo}>
             <MaterialCommunityIcons
@@ -94,20 +107,26 @@ const Dashboard = ({navigation}) => {
               size={28}
               color="#0CCBE5"
             />
-            <Text style={{padding: 5, paddingLeft: 20}}>{users?.details}</Text>
+            <Text style={{padding: 5, paddingLeft: 20}}>
+              {userData?.details}
+            </Text>
           </View>
           <View>
             <Text
               style={{...styles.btn, marginTop: 50}}
               onPress={() => {
-                navigation.navigate('mealdetails');
+                navigation.navigate('mealdetails', {
+                  username: username,
+                });
               }}>
               See Meal Details...
             </Text>
             <Text
               style={styles.btn}
               onPress={() => {
-                navigation.navigate('paymentdetails');
+                navigation.navigate('paymentdetails', {
+                  username: username,
+                });
               }}>
               See Payment Details...
             </Text>
@@ -187,7 +206,7 @@ const styles = StyleSheet.create({
   },
   details: {
     width: windowWidth * 0.6,
-    marginTop: 80,
+    marginTop: 40,
   },
   detailsinfo: {
     flexDirection: 'row',
@@ -195,7 +214,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   btn: {
-    padding: 15,
+    padding: 10,
     textAlign: 'center',
     borderRadius: 20,
     backgroundColor: '#0CCBE5',
