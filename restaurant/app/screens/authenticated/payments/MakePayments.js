@@ -40,7 +40,7 @@ const MakePayments = ({navigation, route}) => {
     calculateTotal();
   }, []);
 
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState();
   const [comment, setComment] = useState();
 
   const makePayment = async () => {

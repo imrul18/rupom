@@ -4,8 +4,8 @@ import Toast from 'react-native-toast-message';
 import axios from "axios";
 
 let Api = axios.create({
-  baseURL: `http://192.168.0.42:3000/`,
-  // baseURL: `http://localhost:3000/`,
+  // baseURL: `http://192.168.0.42:3000/`,
+  baseURL: `http://api.meal.imrul.xyz/`,
   headers: {
     "Content-type": "application/json",
     "accept": "application/json",

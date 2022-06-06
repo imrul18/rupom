@@ -126,6 +126,14 @@ const MemberBalanceHistory = ({navigation, route}) => {
               Comment
             </Text>
           </View>
+          {!thisMonth && (
+            <View style={styles.mealList}>
+              <Text style={styles.mealdate}></Text>
+              <Text style={styles.mealfield}></Text>
+              <Text style={styles.mealfield}>0</Text>
+              <Text style={styles.mealcomment}>balance</Text>
+            </View>
+          )}
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{height: windowHeight * 0.3}}>
@@ -142,12 +150,14 @@ const MemberBalanceHistory = ({navigation, route}) => {
                           date.getMonth() + 1
                         }-${date.getFullYear()}`}</Text>
 
-                        {itm?.amount < 0 ? (
-                          <Text style={{...styles.mealfield, color: 'red'}}>
+                        {itm?.details == 'payment' ? (
+                          <Text style={{...styles.mealfield, color: '#0CCBE5'}}>
                             {itm?.amount}
                           </Text>
                         ) : (
-                          <Text style={styles.mealfield}>{itm?.amount}</Text>
+                          <Text style={{...styles.mealfield, color: '#FF6347'}}>
+                            {itm?.amount}
+                          </Text>
                         )}
                         <Text style={styles.mealfield}>
                           {itm?.current_amount}
@@ -165,12 +175,14 @@ const MemberBalanceHistory = ({navigation, route}) => {
                         date.getMonth() + 1
                       }-${date.getFullYear()}`}</Text>
 
-                      {itm?.amount < 0 ? (
-                        <Text style={{...styles.mealfield, color: 'red'}}>
+                      {itm?.details == 'payment' ? (
+                        <Text style={{...styles.mealfield, color: '#0CCBE5'}}>
                           {itm?.amount}
                         </Text>
                       ) : (
-                        <Text style={styles.mealfield}>{itm?.amount}</Text>
+                        <Text style={{...styles.mealfield, color: '#FF6347'}}>
+                          {itm?.amount}
+                        </Text>
                       )}
                       <Text style={styles.mealfield}>
                         {itm?.current_amount}

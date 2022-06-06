@@ -6,6 +6,8 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
+  Modal,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import memberService from '../../../services/MemberService';
@@ -13,6 +15,7 @@ import memberService from '../../../services/MemberService';
 const windowWidth = Dimensions.get('window').width;
 
 const AddMember = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     fullname: '',
@@ -29,11 +32,13 @@ const AddMember = () => {
   };
 
   const addMember = async () => {
+    setLoading(true);
     if (
       formData.username === '' ||
       formData.fullname === '' ||
       formData.phone === ''
     ) {
+      setLoading(false);
       Toast.show({
         type: 'error',
         text1: 'Empty Field',
@@ -42,7 +47,6 @@ const AddMember = () => {
       });
     } else {
       const res = await memberService.add(formData);
-      console.log(res);
       if (res.type == 'info') {
         setFormData({
           username: '',
@@ -52,6 +56,7 @@ const AddMember = () => {
           details: '',
         });
       }
+      setLoading(false);
     }
   };
   return (
@@ -93,6 +98,12 @@ const AddMember = () => {
           Submit
         </Text>
       </TouchableOpacity>
+      <Modal animationType="slide" transparent={true} visible={loading}>
+        <View style={styles.loginModalView}>
+          <ActivityIndicator size="large" color="red" />
+          <Text>Please Wait...</Text>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -122,6 +133,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loginModalView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    marginHorizontal: 100,
+    marginVertical: 300,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#7f7f7f',
   },
 });
 export default AddMember;

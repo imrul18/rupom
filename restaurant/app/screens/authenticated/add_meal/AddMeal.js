@@ -29,12 +29,10 @@ const AddMeal = () => {
         date.getMonth() + 1
       }-${date.getFullYear()}`,
     };
-    if (date.getHours() > 10 && date.getHours() < 18) {
+    if (date.getHours() < 16) {
       await MealService.addlunch(data);
-    } else if (date.getHours() > 17 && date.getHours() < 24) {
-      await MealService.adddinner(data);
     } else {
-      await MealService.breakfast(data);
+      await MealService.adddinner(data);
     }
     setLoading(false);
   };

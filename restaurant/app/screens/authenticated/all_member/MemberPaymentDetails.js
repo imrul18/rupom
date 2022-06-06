@@ -128,7 +128,7 @@ const MemberPaymentDetails = ({navigation, route}) => {
                     new Date(itm?.created_at).getMonth() + 1
                   ) {
                     return (
-                      <View style={styles.mealList}>
+                      <View style={styles.mealList} key={itm?.id}>
                         <Text style={styles.mealdate}>{`${date.getDate()}-${
                           date.getMonth() + 1
                         }-${date.getFullYear()}`}</Text>
@@ -147,7 +147,7 @@ const MemberPaymentDetails = ({navigation, route}) => {
               : payment.map(itm => {
                   let date = new Date(itm?.created_at);
                   return (
-                    <View style={styles.mealList} key={itm?._id}>
+                    <View style={styles.mealList} key={itm?.id}>
                       <Text style={styles.mealdate}>{`${date.getDate()}-${
                         date.getMonth() + 1
                       }-${date.getFullYear()}`}</Text>

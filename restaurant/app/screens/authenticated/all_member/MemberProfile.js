@@ -10,15 +10,15 @@ import {
   ActivityIndicator,
   PermissionsAndroid,
 } from 'react-native';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {openComposer} from 'react-native-email-link';
 
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import QRCode from 'react-native-qrcode-svg';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import UserService from '../../../services/UserService';
-
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -53,7 +53,10 @@ const MemberProfile = ({navigation, route}) => {
   const calculateTotal = () => {
     let carryTotal = 0;
     meals?.forEach(element => {
-      if (new Date().getMonth() + 1 === new Date(element.created_at).getMonth() + 1) {
+      if (
+        new Date().getMonth() + 1 ===
+        new Date(element.created_at).getMonth() + 1
+      ) {
         if (element?.dinner) {
           carryTotal = carryTotal + element.dinner;
         }
@@ -75,11 +78,6 @@ const MemberProfile = ({navigation, route}) => {
       subject: 'About Govt. BM College Canteen Issue',
       body: 'Hi, ...',
     });
-  };
-
-
-  const downLoadIDcard = async () => {
-    console.log("Downloaded");
   };
 
   return (
@@ -168,7 +166,11 @@ const MemberProfile = ({navigation, route}) => {
               }}>
               Balance History...
             </Text>
-            <Text style={styles.btn} onPress={downLoadIDcard}>
+            <Text style={styles.btn} onPress={() => {
+                navigation.navigate('member_ID_card', {
+                  users: users,
+                });
+              }}>
               Download ID card...
             </Text>
             <Text

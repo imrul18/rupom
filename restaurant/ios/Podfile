@@ -25,6 +25,8 @@ target 'restaurant' do
 
   pod 'react-native-html-to-pdf', :path => '../node_modules/react-native-html-to-pdf'
 
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
   target 'restaurantTests' do
     inherit! :complete
     # Pods for testing

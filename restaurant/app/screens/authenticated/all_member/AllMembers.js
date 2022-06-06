@@ -7,6 +7,7 @@ import MemberProfile from './MemberProfile';
 import MemberMealDetails from './MemberMealDetails';
 import MemberPaymentDetails from './MemberPaymentDetails';
 import MemberBalanceHistory from './MemberBalanceHistory';
+import MemberIDCard from './MemberIDCard';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ const AllMembers = () => {
       <Stack.Screen name="member_meal_details" component={MemberMealDetails} />
       <Stack.Screen name="member_payment_details" component={MemberPaymentDetails} />
       <Stack.Screen name="member_balance_history" component={MemberBalanceHistory} />
+      <Stack.Screen name="member_ID_card" component={MemberIDCard} />
     </Stack.Navigator>
   );
 };
